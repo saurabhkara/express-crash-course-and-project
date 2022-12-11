@@ -4,12 +4,19 @@ const path = require('path');
 const PORT = process.env.PORT || 3000;
 
 const mainRoute = require('./router/route');
+const productRoute = require('./router/product');
 const apiMiddleware = require('./middlewares/apikeys');
 
 
 app.set('view engine','ejs');
 
 app.use(express.static('public'));
+app.use(express.json());
+
+//normal form submittion url encoded middleware used
+// app.use(express.urlencoded({extended: false}));
+
+
 
 // console.log(app.get('views'));
 // console.log(app.get('view engine'));
@@ -50,7 +57,12 @@ app.use(express.static('public'));
 //using express router
 
 app.use('/',mainRoute);
+app.use('/',productRoute);
 
+
+app.use((req,res,next)=>{
+   return res.json({message:'Page not found'});
+})
 
 app.listen(PORT,()=>{
     console.log(`listing on port ${PORT}`);
