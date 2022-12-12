@@ -6,6 +6,7 @@ const PORT = process.env.PORT || 3000;
 const mainRoute = require('./router/route');
 const productRoute = require('./router/product');
 const apiMiddleware = require('./middlewares/apikeys');
+const ErrorHandler = require('./errors/ErrorHandler');
 
 
 app.set('view engine','ejs');
@@ -61,8 +62,31 @@ app.use('/',productRoute);
 
 
 app.use((req,res,next)=>{
-   return res.json({message:'Page not found'});
+   return res.json({message:'Page not found 404'});
 })
+
+app.use((err, req, res, next)=>{
+    // next();
+    // res.json({message : 'All fields are required'});
+
+    if(err instanceof ErrorHandler){
+        res.status(err.status).json({
+            error:{
+                message: err.msg,
+                status:err.status
+            }
+        })
+    }else{
+        res.status(500).json({
+            error:{
+                message:err.msg,
+                status:err.status
+            }
+        })
+    }
+})
+
+
 
 app.listen(PORT,()=>{
     console.log(`listing on port ${PORT}`);
